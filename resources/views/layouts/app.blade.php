@@ -14,37 +14,39 @@
 
     <div class="flex items-center gap-4">
 
-        <a href="/" class="hover:underline">Inicio</a>
+        <a href="/" class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
+            Inicio
+        </a>
 
         <!-- USUARIO NO LOGUEADO -->
         @guest
-            <a href="{{ route('login') }}" class="hover:underline">
+            <a href="{{ route('login') }}" class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                 Login
             </a>
 
-            <a href="{{ route('register') }}" class="hover:underline">
+            <a href="{{ route('register') }}" class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                 Register
             </a>
         @endguest
 
         <!-- USUARIO LOGUEADO -->
         @auth
-            <a href="/mis-productos" class="hover:underline">
+            <a href="/mis-productos" class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                 Mis productos
             </a>
 
             <a href="/crear"
-            class="bg-white text-blue-600 px-3 py-1 rounded hover:bg-gray-200">
+            class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                 Publicar
             </a>
 
-            <a href="/admin" class="hover:underline">
+            <a href="/admin" class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                 Admin
             </a>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="bg-red-500 px-2 py-1 rounded hover:bg-red-600">
+                <button class="px-3 py-1 rounded border border-white/60 hover:bg-blue-700 transition">
                     Salir
                 </button>
             </form>

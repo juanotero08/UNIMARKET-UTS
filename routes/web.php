@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ProductoController::class,'index']);
 
 Route::get('/dashboard', function () {
+    if(auth()->user()->rol == 'admin'){
+        return redirect('/admin');
+    }
     return redirect('/');
-})->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function(){
 

@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductoController::class,'index']);
 
+Route::get('/dashboard', function () {
+    return redirect('/');
+})->name('dashboard');
+
 Route::middleware(['auth'])->group(function(){
 
     Route::get('/crear',[ProductoController::class,'create']);

@@ -16,23 +16,39 @@
 
         <a href="/" class="hover:underline">Inicio</a>
 
-        <a href="/mis-productos" class="hover:underline">
-            Mis productos
-        </a>
+        <!-- USUARIO NO LOGUEADO -->
+        @guest
+            <a href="{{ route('login') }}" class="hover:underline">
+                Login
+            </a>
 
-        <a href="/crear"
-        class="bg-white text-blue-600 px-3 py-1 rounded hover:bg-gray-200">
-            Publicar
-        </a>
+            <a href="{{ route('register') }}" class="hover:underline">
+                Register
+            </a>
+        @endguest
 
-        <a href="/admin" class="hover:underline">Admin</a>
+        <!-- USUARIO LOGUEADO -->
+        @auth
+            <a href="/mis-productos" class="hover:underline">
+                Mis productos
+            </a>
 
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button class="bg-red-500 px-2 py-1 rounded">
-                Salir
-            </button>
-        </form>
+            <a href="/crear"
+            class="bg-white text-blue-600 px-3 py-1 rounded hover:bg-gray-200">
+                Publicar
+            </a>
+
+            <a href="/admin" class="hover:underline">
+                Admin
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="bg-red-500 px-2 py-1 rounded hover:bg-red-600">
+                    Salir
+                </button>
+            </form>
+        @endauth
 
     </div>
 

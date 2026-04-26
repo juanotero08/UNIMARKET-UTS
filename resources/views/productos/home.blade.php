@@ -7,7 +7,7 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
 @foreach($productos as $p)
-<div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
+<div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden relative">
 
     <img src="https://via.placeholder.com/300"
     class="w-full h-48 object-cover">
@@ -27,6 +27,10 @@
         <p class="text-sm mt-2">
             📞 {{ $p->contacto }}
         </p>
+
+        <a href="tel:{{ $p->contacto }}" class="absolute bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow transition">
+            CONTACTAR
+        </a>
 
     </div>
 

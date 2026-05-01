@@ -4,15 +4,15 @@
 
 <!-- Header -->
 <div class="mb-8">
-    <h1 class="section-header">Publica un producto o servicio</h1>
-    <p class="section-subtitle">Comparte lo que tienes para ofrecer con la comunidad UTS</p>
+    <h1 class="section-header">Editar producto o servicio</h1>
+    <p class="section-subtitle">Actualiza la información de tu publicación</p>
 </div>
 
 <!-- Formulario -->
 <div class="max-w-2xl mx-auto">
     <div class="card p-8 shadow-elevated">
         
-        <form method="POST" action="/guardar" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="/producto/{{ $producto->id }}/actualizar" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Tipo de publicación -->
@@ -21,13 +21,13 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-3">Tipo de publicación *</label>
                     <div class="flex gap-3">
                         <label class="flex items-center cursor-pointer group">
-                            <input type="radio" name="tipo" value="producto" checked 
-                                   class="w-4 h-4 text-uts-600" onchange="actualizarEtiqueta()">
+                            <input type="radio" name="tipo" value="producto" {{ $producto->tipo === 'producto' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-uts-600">
                             <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-uts-600">📦 Producto</span>
                         </label>
                         <label class="flex items-center cursor-pointer group">
-                            <input type="radio" name="tipo" value="servicio" 
-                                   class="w-4 h-4 text-uts-600" onchange="actualizarEtiqueta()">
+                            <input type="radio" name="tipo" value="servicio" {{ $producto->tipo === 'servicio' ? 'checked' : '' }}
+                                   class="w-4 h-4 text-uts-600">
                             <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-uts-600">🎓 Servicio</span>
                         </label>
                     </div>
@@ -40,37 +40,34 @@
             <!-- Nombre -->
             <div>
                 <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">Nombre o título *</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Ej: Calculus II, Nike Jordan Rojos" 
-                       class="input-base" value="{{ old('nombre') }}" required>
+                <input type="text" id="nombre" name="nombre" class="input-base" value="{{ $producto->nombre }}" required>
                 @error('nombre')
                     <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Especificación (Categoría) - DROPDOWN -->
+            <!-- Especificación (Categoría) -->
             <div>
-                <label for="especificacion" id="etiqueta-especificacion" class="block text-sm font-semibold text-gray-700 mb-2">
-                    Categoría del producto *
+                <label for="especificacion" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Categoría *
                 </label>
                 <select id="especificacion" name="especificacion" class="input-base" required>
                     <option value="">-- Selecciona una categoría --</option>
-                    <!-- Categorías de Productos -->
                     <optgroup label="📦 PRODUCTOS">
-                        <option value="Libros y útiles escolares">Libros y útiles escolares</option>
-                        <option value="Ropa y calzado">Ropa y calzado</option>
-                        <option value="Electrónica">Electrónica</option>
-                        <option value="Alimentos y bebidas">Alimentos y bebidas</option>
-                        <option value="Deporte y recreación">Deporte y recreación</option>
-                        <option value="Accesorios">Accesorios</option>
+                        <option value="Libros y útiles escolares" {{ $producto->especificacion === 'Libros y útiles escolares' ? 'selected' : '' }}>Libros y útiles escolares</option>
+                        <option value="Ropa y calzado" {{ $producto->especificacion === 'Ropa y calzado' ? 'selected' : '' }}>Ropa y calzado</option>
+                        <option value="Electrónica" {{ $producto->especificacion === 'Electrónica' ? 'selected' : '' }}>Electrónica</option>
+                        <option value="Alimentos y bebidas" {{ $producto->especificacion === 'Alimentos y bebidas' ? 'selected' : '' }}>Alimentos y bebidas</option>
+                        <option value="Deporte y recreación" {{ $producto->especificacion === 'Deporte y recreación' ? 'selected' : '' }}>Deporte y recreación</option>
+                        <option value="Accesorios" {{ $producto->especificacion === 'Accesorios' ? 'selected' : '' }}>Accesorios</option>
                     </optgroup>
-                    <!-- Categorías de Servicios -->
                     <optgroup label="🎓 SERVICIOS">
-                        <option value="Tutoría académica">Tutoría académica</option>
-                        <option value="Asesoría profesional">Asesoría profesional</option>
-                        <option value="Clases de idiomas">Clases de idiomas</option>
-                        <option value="Trabajos y proyectos">Trabajos y proyectos</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Otros servicios">Otros servicios</option>
+                        <option value="Tutoría académica" {{ $producto->especificacion === 'Tutoría académica' ? 'selected' : '' }}>Tutoría académica</option>
+                        <option value="Asesoría profesional" {{ $producto->especificacion === 'Asesoría profesional' ? 'selected' : '' }}>Asesoría profesional</option>
+                        <option value="Clases de idiomas" {{ $producto->especificacion === 'Clases de idiomas' ? 'selected' : '' }}>Clases de idiomas</option>
+                        <option value="Trabajos y proyectos" {{ $producto->especificacion === 'Trabajos y proyectos' ? 'selected' : '' }}>Trabajos y proyectos</option>
+                        <option value="Transporte" {{ $producto->especificacion === 'Transporte' ? 'selected' : '' }}>Transporte</option>
+                        <option value="Otros servicios" {{ $producto->especificacion === 'Otros servicios' ? 'selected' : '' }}>Otros servicios</option>
                     </optgroup>
                 </select>
                 @error('especificacion')
@@ -81,8 +78,7 @@
             <!-- Descripción -->
             <div>
                 <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-2">Descripción *</label>
-                <textarea id="descripcion" name="descripcion" placeholder="Describe en detalle qué ofreces..." 
-                          rows="4" class="input-base" required>{{ old('descripcion') }}</textarea>
+                <textarea id="descripcion" name="descripcion" rows="4" class="input-base" required>{{ $producto->descripcion }}</textarea>
                 @error('descripcion')
                     <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                 @enderror
@@ -92,8 +88,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="precio" class="block text-sm font-semibold text-gray-700 mb-2">Precio ($) *</label>
-                    <input type="number" id="precio" name="precio" placeholder="15000" 
-                           class="input-base" step="1000" min="0" value="{{ old('precio') }}" required>
+                    <input type="number" id="precio" name="precio" class="input-base" step="1000" min="0" value="{{ $producto->precio }}" required>
                     @error('precio')
                         <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                     @enderror
@@ -102,8 +97,7 @@
                 <!-- Contacto -->
                 <div>
                     <label for="contacto" class="block text-sm font-semibold text-gray-700 mb-2">WhatsApp o contacto *</label>
-                    <input type="text" id="contacto" name="contacto" placeholder="300 123 4567" 
-                           class="input-base" value="{{ old('contacto') }}" required>
+                    <input type="text" id="contacto" name="contacto" class="input-base" value="{{ $producto->contacto }}" required>
                     @error('contacto')
                         <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                     @enderror
@@ -115,6 +109,15 @@
                 <label for="imagen" class="block text-sm font-semibold text-gray-700 mb-3">
                     Imagen del producto o servicio (opcional)
                 </label>
+                
+                <!-- Imagen actual -->
+                @if($producto->imagen)
+                <div class="mb-4 p-4 bg-uts-50 rounded-lg">
+                    <p class="text-sm text-gray-700 font-medium mb-2">Imagen actual:</p>
+                    <img src="{{ $producto->imagen_url }}" alt="{{ $producto->nombre }}" class="h-32 w-32 object-cover rounded-lg">
+                </div>
+                @endif
+
                 <div class="border-2 border-dashed border-uts-300 rounded-lg p-6 text-center cursor-pointer 
                             hover:border-uts-500 hover:bg-uts-50 transition-all" onclick="document.getElementById('imagen-input').click()">
                     <div id="preview-container" class="hidden mb-4">
@@ -122,7 +125,7 @@
                     </div>
                     <div id="upload-placeholder">
                         <div class="text-4xl mb-2">📷</div>
-                        <p class="text-gray-600 font-medium">Haz clic para subir una imagen</p>
+                        <p class="text-gray-600 font-medium">Haz clic para cambiar la imagen</p>
                         <p class="text-xs text-gray-500 mt-1">JPG, PNG o GIF (máx 2MB)</p>
                     </div>
                 </div>
@@ -134,11 +137,11 @@
 
             <!-- Botones -->
             <div class="flex gap-4 pt-4 border-t">
-                <a href="/" class="btn-secondary flex-1 text-center">
+                <a href="/mis-productos" class="btn-secondary flex-1 text-center">
                     ← Cancelar
                 </a>
                 <button type="submit" class="btn-primary flex-1">
-                    ✓ Publicar
+                    ✓ Guardar cambios
                 </button>
             </div>
 
@@ -148,16 +151,6 @@
 </div>
 
 <script>
-function actualizarEtiqueta() {
-    const tipo = document.querySelector('input[name="tipo"]:checked').value;
-    const etiqueta = document.getElementById('etiqueta-especificacion');
-    if (tipo === 'servicio') {
-        etiqueta.textContent = 'Categoría de servicio *';
-    } else {
-        etiqueta.textContent = 'Categoría del producto *';
-    }
-}
-
 function previewImagen(input) {
     const preview = document.getElementById('preview-container');
     const previewImg = document.getElementById('preview-img');

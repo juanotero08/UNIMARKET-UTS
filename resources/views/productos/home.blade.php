@@ -30,29 +30,43 @@
         </div>
 
         <!-- Stats -->
-        <div class="grid grid-cols-3 gap-4 text-center mt-12">
+        <div class="grid grid-cols-2 gap-4 text-center mt-12">
             <div class="bg-white/10 backdrop-blur rounded-lg p-4">
-                <div class="text-3xl font-bold">{{ $productos->count() }}</div>
-                <div class="text-sm text-uts-100">Productos activos</div>
+                <div class="text-3xl font-bold">{{ $productos->where('tipo', 'producto')->count() }}</div>
+                <div class="text-sm text-uts-100">Productos</div>
             </div>
             <div class="bg-white/10 backdrop-blur rounded-lg p-4">
                 <div class="text-3xl font-bold">{{ $productos->where('tipo', 'servicio')->count() }}</div>
                 <div class="text-sm text-uts-100">Servicios</div>
             </div>
-            <div class="bg-white/10 backdrop-blur rounded-lg p-4">
-                <div class="text-3xl font-bold">{{ $productos->where('tipo', 'producto')->count() }}</div>
-                <div class="text-sm text-uts-100">Productos</div>
-            </div>
         </div>
     </div>
 </div>
 
-<!-- Filtros (opcional) -->
-<div class="mb-8 flex gap-3 flex-wrap">
-    <span class="badge badge-success">✨ Todos</span>
-    <span class="badge bg-amber-100 text-amber-700">📦 Productos</span>
-    <span class="badge bg-blue-100 text-blue-700">🎓 Servicios</span>
+<!-- Filtros -->
+<div class="mb-8 flex gap-3 items-center">
+    <label class="text-sm font-semibold text-gray-700">Filtrar por:</label>
+    <select id="filterType" class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-uts-500">
+        <option value="">✨ Todos</option>
+        <option value="producto">📦 Productos</option>
+        <option value="servicio">🎓 Servicios</option>
+    </select>
 </div>
+
+<script>
+    document.getElementById('filterType').addEventListener('change', function(e) {
+        const filterValue = e.target.value;
+        const products = document.querySelectorAll('[data-product-type]');
+        
+        products.forEach(product => {
+            if (filterValue === '' || product.dataset.productType === filterValue) {
+                product.classList.remove('hidden');
+            } else {
+                product.classList.add('hidden');
+            }
+        });
+    });
+</script>
 
 <!-- Header Section -->
 <div class="mb-8">
@@ -64,26 +78,37 @@
 @if($productos->count() > 0)
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($productos as $p)
-        <div class="card-hover group">
-            <!-- Imagen con overlay -->
-            <div class="relative overflow-hidden bg-gradient-to-br from-uts-100 to-uts-50 h-56">
-                <img src="{{ $p->imagen_url }}"
-                     alt="{{ $p->nombre }}"
-                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                
-                <!-- Badges -->
-                <div class="absolute top-3 right-3 flex gap-2">
-                    <span class="badge-success shadow-lg">
-                        {{ $p->tipo === 'servicio' ? '🎓 Servicio' : '📦 Producto' }}
-                    </span>
-                    <span class="badge bg-blue-100 text-blue-700 shadow-lg">
-                        {{ $p->especificacion }}
-                    </span>
+        <div class="card-hover group" data-product-type="{{ $p->tipo }}">
+            <!-- Imagen opcional -->
+            @if($p->imagen)
+                <div class="relative overflow-hidden bg-gradient-to-br from-uts-100 to-uts-50 h-56">
+                    <img src="{{ $p->imagen_url }}"
+                         alt="{{ $p->nombre }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+
+                    <!-- Badges -->
+                    <div class="absolute top-3 right-3 flex gap-2">
+                        <span class="badge-success shadow-lg">
+                            {{ $p->tipo === 'servicio' ? '🎓 Servicio' : '📦 Producto' }}
+                        </span>
+                        <span class="badge bg-blue-100 text-blue-700 shadow-lg">
+                            {{ $p->especificacion }}
+                        </span>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <!-- Contenido -->
             <div class="p-6">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                    <span class="badge-success">
+                        {{ $p->tipo === 'servicio' ? '🎓 Servicio' : '📦 Producto' }}
+                    </span>
+                    <span class="badge bg-blue-100 text-blue-700">
+                        {{ $p->especificacion }}
+                    </span>
+                </div>
+
                 <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{{ $p->nombre }}</h3>
                 
                 <p class="text-gray-600 text-sm mb-4 line-clamp-2">

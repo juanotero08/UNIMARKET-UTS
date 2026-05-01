@@ -6,6 +6,10 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'UNI Market') }}</title>
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,9 +23,7 @@
             <!-- Header -->
             <div class="mb-8 text-center">
                 <div class="flex justify-center mb-4">
-                    <div class="w-16 h-16 bg-gradient-to-br from-uts-500 to-uts-700 rounded-2xl flex items-center justify-center shadow-elevated">
-                        <span class="text-4xl">📚</span>
-                    </div>
+                    <img src="{{ asset('img/logo.png') }}" alt="UNI Market Logo" class="h-32 w-32 object-contain rounded-2xl shadow-elevated">
                 </div>
                 <a href="/" class="inline-block">
                     <h1 class="text-4xl font-bold text-gradient">UNI Market</h1>

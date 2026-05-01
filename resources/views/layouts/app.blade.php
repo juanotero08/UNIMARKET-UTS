@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNI Market - Marketplace Universitario UTS</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">
     @vite('resources/css/app.css')
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-slate-100">
@@ -14,9 +17,7 @@
         <div class="flex justify-between items-center h-16">
             <!-- LOGO Y MARCA -->
             <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-subtle">
-                    <span class="text-uts-600 font-bold text-lg">📚</span>
-                </div>
+                <img src="{{ asset('img/logo.png') }}" alt="UNI Market Logo" class="h-10 w-10 object-contain rounded-lg">
                 <h1 class="navbar-brand hidden sm:block">UNI Market</h1>
                 <h1 class="navbar-brand sm:hidden text-lg">UNI</h1>
             </div>

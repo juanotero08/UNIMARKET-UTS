@@ -17,17 +17,35 @@ class ProductoController extends Controller
     }
 
     public function store(Request $request){
-
-        Producto::create([
-            'nombre'=>$request->nombre,
-            'descripcion'=>$request->descripcion,
-            'precio'=>$request->precio,
-            'contacto'=>$request->contacto,
-            'estado'=>'pendiente',
-            'user_id'=>auth()->id()
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'tipo' => 'required|in:producto,servicio',
+            'especificacion' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'precio' => 'required|numeric|min:0',
+            'contacto' => 'required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        return redirect('/');
+        // Guardar imagen si existe
+        $imagenPath = null;
+        if($request->hasFile('imagen')){
+            $imagenPath = $request->file('imagen')->store('productos', 'public');
+        }
+
+        Producto::create([
+            'nombre' => $validated['nombre'],
+            'tipo' => $validated['tipo'],
+            'especificacion' => $validated['especificacion'],
+            'descripcion' => $validated['descripcion'],
+            'precio' => $validated['precio'],
+            'contacto' => $validated['contacto'],
+            'imagen' => $imagenPath,
+            'estado' => 'pendiente',
+            'user_id' => auth()->id()
+        ]);
+
+        return redirect('/mis-productos')->with('success', 'Producto publicado exitosamente. Está pendiente de aprobación.');
     }
 
     public function mis(){

@@ -1,3 +1,183 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== CONFIGURACIÓN BASE ===== */
+:root {
+    --color-primary: #2e7d32;
+    --color-dark: #1b5e20;
+    --color-light: #e8f5e9;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    @apply bg-gradient-to-br from-slate-50 to-slate-100 text-gray-800 antialiased;
+    font-feature-settings: "kern" 1;
+}
+
+/* ===== COMPONENTES GLOBALES ===== */
+@layer components {
+    /* Botones */
+    .btn-primary {
+        @apply px-6 py-2.5 bg-uts-600 text-white font-medium rounded-lg 
+               transition-all duration-300 hover:bg-uts-700 active:scale-95
+               focus:outline-none focus:ring-2 focus:ring-uts-400 focus:ring-offset-2
+               shadow-subtle hover:shadow-elevated;
+    }
+
+    .btn-secondary {
+        @apply px-6 py-2.5 bg-white text-uts-600 font-medium rounded-lg
+               border-2 border-uts-300 transition-all duration-300
+               hover:bg-uts-50 active:scale-95
+               focus:outline-none focus:ring-2 focus:ring-uts-400 focus:ring-offset-2;
+    }
+
+    .btn-ghost {
+        @apply px-6 py-2.5 text-uts-600 font-medium rounded-lg
+               transition-all duration-300 hover:bg-uts-100
+               focus:outline-none focus:ring-2 focus:ring-uts-400;
+    }
+
+    .btn-danger {
+        @apply px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg
+               transition-all duration-300 hover:bg-red-700 active:scale-95
+               focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2
+               shadow-subtle hover:shadow-elevated;
+    }
+
+    /* Inputs */
+    .input-base {
+        @apply w-full px-4 py-2.5 rounded-lg border-2 border-gray-200
+               transition-all duration-300 font-medium
+               focus:border-uts-500 focus:outline-none focus:ring-2
+               focus:ring-uts-100 placeholder-gray-400;
+    }
+
+    /* Cards */
+    .card {
+        @apply bg-white rounded-xl shadow-subtle hover:shadow-elevated
+               transition-all duration-300 overflow-hidden;
+    }
+
+    .card-hover {
+        @apply card hover:-translate-y-1;
+    }
+
+    /* Badges */
+    .badge {
+        @apply inline-block px-3 py-1.5 rounded-full font-semibold text-sm
+               bg-uts-100 text-uts-700;
+    }
+
+    .badge-success {
+        @apply bg-green-100 text-green-700;
+    }
+
+    .badge-warning {
+        @apply bg-amber-100 text-amber-700;
+    }
+
+    .badge-danger {
+        @apply bg-red-100 text-red-700;
+    }
+
+    /* Dividers */
+    .divider {
+        @apply h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-6;
+    }
+}
+
+/* ===== NAVBAR PERSONALIZADA ===== */
+.navbar {
+    @apply bg-gradient-to-r from-uts-600 to-uts-700 text-white shadow-elevated
+           sticky top-0 z-50;
+}
+
+.navbar-brand {
+    @apply text-2xl font-bold tracking-tight;
+}
+
+.nav-link {
+    @apply px-4 py-2 rounded-lg transition-all duration-300
+           hover:bg-white/10 focus:outline-none focus:ring-2
+           focus:ring-white/30;
+}
+
+.nav-link.active {
+    @apply bg-white/20 border-b-2 border-white;
+}
+
+/* ===== SECCIONES ===== */
+.section-header {
+    @apply text-4xl font-bold text-gray-900 mb-2 
+           bg-gradient-to-r from-uts-600 to-uts-500 bg-clip-text text-transparent;
+}
+
+.section-subtitle {
+    @apply text-gray-600 text-lg font-light mb-8;
+}
+
+/* ===== EFECTOS ===== */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.4s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== UTILIDADES ===== */
+.text-gradient {
+    @apply bg-gradient-to-r from-uts-600 to-uts-500 bg-clip-text text-transparent;
+}
+
+.glass-effect {
+    @apply bg-white/20 backdrop-blur-md border border-white/30 rounded-lg;
+}
+
+.border-gradient {
+    @apply relative;
+    border-image: linear-gradient(
+            135deg,
+            var(--color-primary),
+            var(--color-dark)
+        )
+        1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .section-header {
+        @apply text-3xl;
+    }
+
+    .navbar-brand {
+        @apply text-xl;
+    }
+}

@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('productos', function (Blueprint $table) {
-    $table->string('contacto')->nullable();
-});
+        // Migración vacía: contacto ya existe en la migración anterior
     }
 
     /**

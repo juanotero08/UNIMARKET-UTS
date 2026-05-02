@@ -10,16 +10,6 @@
     @vite('resources/css/app.css')
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-slate-100">
-<?php
-if (!session_id()) {
-    session_start();
-}
-if (auth()->check()) {
-    $_SESSION['user_id'] = auth()->id();
-    $_SESSION['user_name'] = auth()->user()->name;
-}
-?>
-
 <!-- NAVBAR ELEGANTE -->
 <nav class="navbar">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,7 +50,7 @@ if (auth()->check()) {
                         <span class="sm:hidden">📦</span>
                     </a>
 
-                    <a href="/chat_list.php" 
+                          <a href="{{ route('chat.list') }}" 
                        class="nav-link text-sm sm:text-base hover:bg-white/20 transition">
                         <span class="hidden sm:inline">💬 Chat</span>
                         <span class="sm:hidden">💬</span>

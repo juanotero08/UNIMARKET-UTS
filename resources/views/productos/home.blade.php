@@ -135,10 +135,17 @@
 
                 <!-- Botones -->
                 <div class="flex gap-2">
-                    <a href="/chat.php?producto_id={{ $p->id }}&receptor_id={{ $p->user_id }}" 
-                       class="btn-secondary flex-1 justify-center text-center text-sm">
-                        💬 Mensaje
-                    </a>
+                    @auth
+                        <a href="{{ route('chat.show', ['producto_id' => $p->id, 'receptor_id' => $p->user_id]) }}" 
+                           class="btn-secondary flex-1 justify-center text-center text-sm">
+                            💬 Mensaje
+                        </a>
+                    @else
+                        <a href="{{ route('login') }}" 
+                           class="btn-secondary flex-1 justify-center text-center text-sm">
+                            💬 Mensaje
+                        </a>
+                    @endauth
                     <a href="tel:{{ $p->contacto }}" 
                        class="btn-outline flex-1 justify-center text-center text-sm">
                         📞 Llamar

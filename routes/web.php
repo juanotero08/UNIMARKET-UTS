@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,10 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/aprobar/{id}',[AdminController::class,'aprobar']);
     Route::get('/rechazar/{id}',[AdminController::class,'rechazar']);
     Route::delete('/admin/producto/{id}',[AdminController::class,'destroy']);
+
+    Route::get('/chats', [ChatController::class, 'index'])->name('chat.list');
+    Route::get('/chat', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/mensaje', [ChatController::class, 'store'])->name('chat.store');
 });
 
 require __DIR__.'/auth.php';

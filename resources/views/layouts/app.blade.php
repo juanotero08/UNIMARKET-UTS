@@ -51,6 +51,12 @@
                         <span class="sm:hidden">📦</span>
                     </a>
 
+                    <a href="/chat_list.php" 
+                       class="nav-link text-sm sm:text-base hover:bg-white/20 transition">
+                        <span class="hidden sm:inline">💬 Chat</span>
+                        <span class="sm:hidden">💬</span>
+                    </a>
+
                     <a href="/crear" 
                        class="nav-link bg-white/20 text-sm sm:text-base hover:bg-white/30">
                         <span class="hidden sm:inline">Publicar</span>

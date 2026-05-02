@@ -10,6 +10,15 @@
     @vite('resources/css/app.css')
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-slate-100">
+<?php
+if (!session_id()) {
+    session_start();
+}
+if (auth()->check()) {
+    $_SESSION['user_id'] = auth()->id();
+    $_SESSION['user_name'] = auth()->user()->name;
+}
+?>
 
 <!-- NAVBAR ELEGANTE -->
 <nav class="navbar">

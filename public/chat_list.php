@@ -66,177 +66,233 @@ foreach ($conversaciones_raw as $conv) {
     <title>Mensajes - UNI Market</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        html, body { 
+            height: 100%; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+            background: #fff;
         }
-        .container { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column;
-            background: white;
-        }
-        .header { 
-            background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
-            color: white; 
-            padding: 20px;
+        .chat-wrapper {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100vh;
+            background: #fff;
         }
-        .header-content h1 { font-size: 24px; margin-bottom: 5px; }
-        .header-content p { font-size: 13px; opacity: 0.9; }
-        .back-btn { 
-            background: rgba(255,255,255,0.3); 
-            border: none; 
-            color: white; 
-            font-size: 24px; 
-            cursor: pointer;
+        .conversations-sidebar {
+            width: 320px;
+            background: #fff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .sidebar-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .sidebar-title h2 {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .add-btn {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
+            transition: background 0.2s;
         }
-        .back-btn:hover { background: rgba(255,255,255,0.5); }
-        .conversations-list { 
+        .add-btn:hover { background: #e0e0e0; }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-box input:focus {
+            border-color: #075e54;
+        }
+        .conversations-container {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
         }
-        .conversation { 
-            padding: 15px 16px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex; 
-            align-items: center; 
-            cursor: pointer; 
-            text-decoration: none; 
-            color: inherit;
+        .conversation-item {
+            padding: 8px 8px;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
             transition: background 0.15s;
+            text-decoration: none;
+            color: inherit;
+            margin: 0 8px;
+            border-radius: 12px;
         }
-        .conversation:hover { 
-            background-color: #f5f5f5;
+        .conversation-item:hover {
+            background: #f5f5f5;
         }
-        .avatar { 
-            width: 56px; 
-            height: 56px; 
-            border-radius: 50%; 
-            background: linear-gradient(135deg, #075e54 0%, #128c7e 100%); 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 24px; 
-            margin-right: 12px;
+        .conversation-item.active {
+            background: #e8f5e9;
+        }
+        .avatar-wrapper {
+            position: relative;
             flex-shrink: 0;
         }
-        .conv-info { 
-            flex: 1; 
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #075e54 0%, #128c7e 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            background: #31a24c;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+        .conv-content {
+            flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
-        }
-        .conv-header { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 4px; 
-            align-items: baseline;
-        }
-        .conv-name { 
-            font-weight: 500; 
-            color: #000; 
-            font-size: 15px;
-        }
-        .conv-time { 
-            font-size: 12px; 
-            color: #999;
-            margin-left: 8px;
-        }
-        .conv-message { 
-            font-size: 13px; 
-            color: #666; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-        }
-        .empty { 
-            text-align: center; 
-            padding: 60px 20px;
-            color: #999;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
         }
-        .empty-icon { 
-            font-size: 64px; 
-            margin-bottom: 20px; 
-            opacity: 0.5;
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }
-        .empty-text { 
-            font-size: 16px;
-            margin-bottom: 10px;
+        .conv-name {
+            font-weight: 500;
+            font-size: 15px;
+            color: #000;
         }
-        .empty-subtext { 
+        .conv-time {
             font-size: 13px;
-            color: #bbb;
+            color: #999;
+        }
+        .conv-type {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .conv-message {
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-empty {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            background: #f5f5f5;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <h1>💬 Mensajes</h1>
-                <p><?php echo count($conversaciones); ?> conversación(es)</p>
-            </div>
-            <a href="/" class="back-btn">←</a>
-        </div>
-
-        <div class="conversations-list">
-            <?php if (count($conversaciones) > 0): ?>
-                <?php foreach ($conversaciones as $conv): ?>
-                    <a href="/chat.php?receptor_id=<?php echo $conv['otro_usuario_id']; ?>&producto_id=0" class="conversation">
-                        <div class="avatar">👤</div>
-                        <div class="conv-info">
-                            <div class="conv-header">
-                                <span class="conv-name"><?php echo htmlspecialchars($conv['otro_usuario_nombre']); ?></span>
-                                <span class="conv-time">
-                                    <?php 
-                                        $fecha = new DateTime($conv['ultimo_mensaje_fecha']);
-                                        $ahora = new DateTime();
-                                        $diff = $ahora->diff($fecha);
-                                        
-                                        if ($diff->d == 0) {
-                                            echo $fecha->format('H:i');
-                                        } elseif ($diff->d == 1) {
-                                            echo 'Ayer';
-                                        } elseif ($diff->d < 7) {
-                                            echo $diff->d . 'd';
-                                        } else {
-                                            echo $fecha->format('d/m/y');
-                                        }
-                                    ?>
-                                </span>
-                            </div>
-                            <div class="conv-message"><?php echo htmlspecialchars(substr($conv['ultimo_mensaje'], 0, 50)); ?></div>
-                        </div>
-                    </a>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="empty">
-                    <div class="empty-icon">💭</div>
-                    <div class="empty-text">No tienes conversaciones aún</div>
-                    <div class="empty-subtext">Escribe en un producto para comenzar a chatear</div>
+    <div class="chat-wrapper">
+        <div class="conversations-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <h2>Mis conversaciones</h2>
+                    <button class="add-btn">+</button>
                 </div>
-            <?php endif; ?>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar conversaciones..." />
+                </div>
+            </div>
+            <div class="conversations-container" id="conversationsContainer">
+                <?php if (count($conversaciones) > 0): ?>
+                    <?php foreach ($conversaciones as $index => $conv): ?>
+                        <a href="/chat.php?receptor_id=<?php echo $conv['otro_usuario_id']; ?>&producto_id=0" class="conversation-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                            <div class="avatar-wrapper">
+                                <div class="avatar">👤</div>
+                                <div class="online-indicator"></div>
+                            </div>
+                            <div class="conv-content">
+                                <div class="conv-header">
+                                    <span class="conv-name"><?php echo htmlspecialchars($conv['otro_usuario_nombre']); ?></span>
+                                    <span class="conv-time">
+                                        <?php 
+                                            $fecha = new DateTime($conv['ultimo_mensaje_fecha']);
+                                            $ahora = new DateTime();
+                                            $diff = $ahora->diff($fecha);
+                                            
+                                            if ($diff->h < 1 && $diff->d == 0) {
+                                                echo $diff->i . 'm';
+                                            } elseif ($diff->d == 0) {
+                                                echo $fecha->format('H:i');
+                                            } elseif ($diff->d == 1) {
+                                                echo 'Ayer';
+                                            } elseif ($diff->d < 7) {
+                                                echo $diff->d . 'd';
+                                            } else {
+                                                echo $fecha->format('d/m');
+                                            }
+                                        ?>
+                                    </span>
+                                </div>
+                                <div class="conv-message"><?php echo htmlspecialchars(substr($conv['ultimo_mensaje'], 0, 50)); ?></div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="chat-empty">
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 16px;">💭</div>
+                            <div>No tienes conversaciones</div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="chat-empty" style="flex: 1;">
+            <div style="text-align: center; color: #ccc;">
+                <div style="font-size: 64px; margin-bottom: 16px;">💬</div>
+                <div style="font-size: 18px;">Selecciona una conversación</div>
+            </div>
         </div>
     </div>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const conversations = document.querySelectorAll('.conversation-item');
+            conversations.forEach(conv => {
+                const name = conv.querySelector('.conv-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    conv.style.display = '';
+                } else {
+                    conv.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -16,33 +16,46 @@ $stmt_user = $pdo->prepare("SELECT name FROM users WHERE id = ?");
 $stmt_user->execute([$user_id]);
 $user_actual = $stmt_user->fetch(PDO::FETCH_ASSOC);
 
-// Obtener todas las conversaciones del usuario (emisor o receptor)
+// Obtener todas las conversaciones del usuario de forma simple
 $stmt = $pdo->prepare("
-    SELECT DISTINCT 
+    SELECT 
         CASE 
             WHEN emisor_id = ? THEN receptor_id 
             ELSE emisor_id 
         END as otro_usuario_id,
-        (SELECT name FROM users WHERE id = CASE WHEN emisor_id = ? THEN receptor_id ELSE emisor_id END) as otro_usuario_nombre,
-        (SELECT MAX(created_at) FROM mensajes m2 WHERE 
-            ((m2.emisor_id = ? AND m2.receptor_id = CASE WHEN emisor_id = ? THEN receptor_id ELSE emisor_id END) 
-            OR (m2.receptor_id = ? AND m2.emisor_id = CASE WHEN emisor_id = ? THEN receptor_id ELSE emisor_id END))
-        ) as ultimo_mensaje_fecha,
-        (SELECT mensaje FROM mensajes m3 WHERE 
-            ((m3.emisor_id = ? AND m3.receptor_id = CASE WHEN emisor_id = ? THEN receptor_id ELSE emisor_id END) 
-            OR (m3.receptor_id = ? AND m3.emisor_id = CASE WHEN emisor_id = ? THEN receptor_id ELSE emisor_id END))
-            ORDER BY m3.created_at DESC LIMIT 1
-        ) as ultimo_mensaje
+        MAX(created_at) as ultimo_mensaje_fecha
     FROM mensajes 
     WHERE emisor_id = ? OR receptor_id = ?
     GROUP BY otro_usuario_id
     ORDER BY ultimo_mensaje_fecha DESC
 ");
-$stmt->execute([
-    $user_id, $user_id, $user_id, $user_id, $user_id, $user_id, 
-    $user_id, $user_id, $user_id, $user_id, $user_id, $user_id
-]);
-$conversaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute([$user_id, $user_id, $user_id]);
+$conversaciones_raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Enriquecer los datos con nombres y últimos mensajes
+$conversaciones = [];
+foreach ($conversaciones_raw as $conv) {
+    // Obtener nombre del otro usuario
+    $stmt_name = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+    $stmt_name->execute([$conv['otro_usuario_id']]);
+    $otro_usuario = $stmt_name->fetch(PDO::FETCH_ASSOC);
+    
+    // Obtener último mensaje
+    $stmt_msg = $pdo->prepare("
+        SELECT mensaje FROM mensajes 
+        WHERE (emisor_id = ? AND receptor_id = ?) OR (emisor_id = ? AND receptor_id = ?)
+        ORDER BY created_at DESC LIMIT 1
+    ");
+    $stmt_msg->execute([$user_id, $conv['otro_usuario_id'], $conv['otro_usuario_id'], $user_id]);
+    $ultimo_msg = $stmt_msg->fetch(PDO::FETCH_ASSOC);
+    
+    $conversaciones[] = [
+        'otro_usuario_id' => $conv['otro_usuario_id'],
+        'otro_usuario_nombre' => $otro_usuario['name'] ?? 'Usuario',
+        'ultimo_mensaje_fecha' => $conv['ultimo_mensaje_fecha'],
+        'ultimo_mensaje' => $ultimo_msg['mensaje'] ?? ''
+    ];
+}
 ?>
 
 <!DOCTYPE html>

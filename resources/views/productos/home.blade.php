@@ -133,11 +133,17 @@
                     </div>
                 </div>
 
-                <!-- Botón de contacto -->
-                <a href="tel:{{ $p->contacto }}" 
-                   class="btn-primary w-full justify-center block text-center text-sm">
-                    📞 Contactar
-                </a>
+                <!-- Botones -->
+                <div class="flex gap-2">
+                    <a href="/chat.php?producto_id={{ $p->id }}&receptor_id={{ $p->user_id }}" 
+                       class="btn-secondary flex-1 justify-center text-center text-sm">
+                        💬 Mensaje
+                    </a>
+                    <a href="tel:{{ $p->contacto }}" 
+                       class="btn-outline flex-1 justify-center text-center text-sm">
+                        📞 Llamar
+                    </a>
+                </div>
             </div>
         </div>
         @endforeach

@@ -6,28 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('mensajes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('emisor_id');
-            $table->unsignedBigInteger('receptor_id');
-            $table->unsignedBigInteger('producto_id');
+            $table->foreignId('emisor_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('receptor_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
             $table->text('mensaje');
             $table->timestamps();
 
-            $table->foreign('emisor_id')->references('id')->on('users');
-            $table->foreign('receptor_id')->references('id')->on('users');
-            $table->foreign('producto_id')->references('id')->on('productos');
+            $table->index(['emisor_id', 'receptor_id', 'producto_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('mensajes');

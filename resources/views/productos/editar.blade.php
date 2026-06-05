@@ -12,8 +12,9 @@
 <div class="max-w-2xl mx-auto">
     <div class="card p-8 shadow-elevated">
         
-        <form method="POST" action="/producto/{{ $producto->id }}/actualizar" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="{{ route('productos.update', $producto) }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            @method('PUT')
 
             <!-- Tipo de publicación -->
             <div class="grid grid-cols-2 gap-4">
@@ -137,7 +138,7 @@
 
             <!-- Botones -->
             <div class="flex gap-4 pt-4 border-t">
-                <a href="/mis-productos" class="btn-secondary flex-1 text-center">
+                <a href="{{ route('productos.mis') }}" class="btn-secondary flex-1 text-center">
                     ← Cancelar
                 </a>
                 <button type="submit" class="btn-primary flex-1">

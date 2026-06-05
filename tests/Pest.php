@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,9 +15,9 @@ expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
 
-function loginAs(\App\Models\User $user = null): \App\Models\User
+function loginAs(?User $user = null): User
 {
-    $user ??= \App\Models\User::factory()->create();
+    $user ??= User::factory()->create();
     test()->actingAs($user);
 
     return $user;

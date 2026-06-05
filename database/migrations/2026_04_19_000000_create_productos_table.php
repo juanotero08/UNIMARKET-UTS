@@ -10,16 +10,19 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('nombre');
             $table->enum('tipo', ['producto', 'servicio'])->default('producto');
             $table->string('especificacion')->nullable();
-            $table->string('imagen')->nullable();
             $table->text('descripcion');
             $table->decimal('precio', 10, 2);
             $table->string('contacto');
+            $table->string('imagen')->nullable();
             $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])->default('pendiente');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->index(['estado', 'tipo']);
+            $table->index('user_id');
         });
     }
 

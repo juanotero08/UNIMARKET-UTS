@@ -41,9 +41,17 @@
                         <p class="text-lg font-bold text-uts-600">${{ number_format($p->precio, 0, ',', '.') }}</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <a href="/aprobar/{{ $p->id }}" class="btn-primary text-sm">Aprobar</a>
-                        <a href="/rechazar/{{ $p->id }}" class="btn-secondary text-sm">Rechazar</a>
-                        <form action="/admin/producto/{{ $p->id }}" method="POST" onsubmit="return confirm('¿Eliminar esta publicación?');">
+                        <form action="{{ route('admin.productos.aprobar', $p) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn-primary text-sm">Aprobar</button>
+                        </form>
+                        <form action="{{ route('admin.productos.rechazar', $p) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn-secondary text-sm">Rechazar</button>
+                        </form>
+                        <form action="{{ route('admin.productos.destroy', $p) }}" method="POST" onsubmit="return confirm('¿Eliminar esta publicación?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-danger text-sm">Eliminar</button>
@@ -75,10 +83,18 @@
 
                 <div class="flex gap-2 flex-wrap">
                     @if($p->estado === 'pendiente')
-                        <a href="/aprobar/{{ $p->id }}" class="btn-primary text-sm">Aprobar</a>
-                        <a href="/rechazar/{{ $p->id }}" class="btn-secondary text-sm">Rechazar</a>
+                        <form action="{{ route('admin.productos.aprobar', $p) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn-primary text-sm">Aprobar</button>
+                        </form>
+                        <form action="{{ route('admin.productos.rechazar', $p) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn-secondary text-sm">Rechazar</button>
+                        </form>
                     @endif
-                    <form action="/admin/producto/{{ $p->id }}" method="POST" onsubmit="return confirm('¿Eliminar esta publicación?');">
+                    <form action="{{ route('admin.productos.destroy', $p) }}" method="POST" onsubmit="return confirm('¿Eliminar esta publicación?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-danger text-sm">Eliminar</button>

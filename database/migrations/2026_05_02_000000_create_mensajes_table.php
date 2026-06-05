@@ -14,9 +14,11 @@ return new class extends Migration
             $table->foreignId('receptor_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
             $table->text('mensaje');
+            $table->timestamp('leido_at')->nullable();
             $table->timestamps();
 
-            $table->index(['emisor_id', 'receptor_id', 'producto_id']);
+            $table->index(['producto_id', 'emisor_id', 'receptor_id']);
+            $table->index('created_at');
         });
     }
 

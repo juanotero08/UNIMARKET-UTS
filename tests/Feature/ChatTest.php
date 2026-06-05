@@ -1,8 +1,9 @@
 <?php
 
+use App\Models\Mensaje;
 use App\Models\Producto;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 it('al abrir un chat por primera vez se crea un mensaje inicial', function () {
     $comprador = User::factory()->create();
@@ -46,16 +47,14 @@ it('el listado de chats muestra las conversaciones del usuario', function () {
     $vendedor = User::factory()->create(['name' => 'Vendedor Ejemplo']);
     $producto = Producto::factory()->aprobado()->create(['user_id' => $vendedor->id]);
 
-    DB::table('mensajes')->insert([
+    Mensaje::create([
         'emisor_id' => $comprador->id,
         'receptor_id' => $vendedor->id,
         'producto_id' => $producto->id,
         'mensaje' => 'Mensaje de prueba',
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
-    $this->actingAs($comprador)->get(route('chat.list'))
+    $this->actingAs($comprador)->get(route('chat.index'))
         ->assertOk()
         ->assertSee('Vendedor Ejemplo')
         ->assertSee('Mensaje de prueba');
@@ -73,9 +72,42 @@ it('rechaza enviar mensaje sin contenido', function () {
     ])->assertSessionHasErrors('mensaje');
 });
 
+it('store devuelve JSON cuando el request lo solicita (AJAX)', function () {
+    $comprador = User::factory()->create();
+    $vendedor = User::factory()->create();
+    $producto = Producto::factory()->aprobado()->create(['user_id' => $vendedor->id]);
+
+    $this->actingAs($comprador)
+        ->postJson(route('chat.store'), [
+            'receptor_id' => $vendedor->id,
+            'producto_id' => $producto->id,
+            'mensaje' => 'Por AJAX',
+        ])
+        ->assertOk()
+        ->assertJsonStructure(['id', 'emisor_id', 'mensaje', 'hora']);
+});
+
+it('poll devuelve solo mensajes posteriores a after_id', function () {
+    $a = User::factory()->create();
+    $b = User::factory()->create();
+    $producto = Producto::factory()->aprobado()->create(['user_id' => $b->id]);
+
+    $m1 = Mensaje::create(['emisor_id' => $a->id, 'receptor_id' => $b->id, 'producto_id' => $producto->id, 'mensaje' => 'uno']);
+    Mensaje::create(['emisor_id' => $b->id, 'receptor_id' => $a->id, 'producto_id' => $producto->id, 'mensaje' => 'dos']);
+
+    $this->actingAs($a)
+        ->getJson(route('chat.poll', [
+            'receptor_id' => $b->id,
+            'producto_id' => $producto->id,
+            'after_id' => $m1->id,
+        ]))
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonFragment(['mensaje' => 'dos']);
+});
+
 it('flujo end-to-end: registrar -> publicar -> aprobar -> chatear', function () {
-    // 1. Vendedor se registra y publica
-    $this->post('/register', [
+    $this->post(route('register'), [
         'name' => 'Vendedor',
         'email' => 'vendedor@uts.edu.co',
         'password' => 'Password123!',
@@ -83,7 +115,7 @@ it('flujo end-to-end: registrar -> publicar -> aprobar -> chatear', function () 
     ]);
     $vendedor = User::where('email', 'vendedor@uts.edu.co')->first();
 
-    $this->actingAs($vendedor)->post('/guardar', [
+    $this->actingAs($vendedor)->post(route('productos.store'), [
         'nombre' => 'Calculadora HP',
         'tipo' => 'producto',
         'especificacion' => 'Tecnologia',
@@ -94,16 +126,13 @@ it('flujo end-to-end: registrar -> publicar -> aprobar -> chatear', function () 
     $producto = Producto::where('nombre', 'Calculadora HP')->first();
     expect($producto->estado)->toBe('pendiente');
 
-    // 2. Admin aprueba
     $admin = User::factory()->create(['rol' => 'admin']);
-    $this->actingAs($admin)->get("/aprobar/{$producto->id}");
+    $this->actingAs($admin)->patch(route('admin.productos.aprobar', $producto));
     expect($producto->fresh()->estado)->toBe('aprobado');
 
-    // 3. El producto aparece en home
-    auth()->logout();
+    Auth::logout();
     $this->get('/')->assertSee('Calculadora HP');
 
-    // 4. Un comprador chatea con el vendedor
     $comprador = User::factory()->create();
     $this->actingAs($comprador)->get(route('chat.show', [
         'receptor_id' => $vendedor->id,

@@ -18,14 +18,14 @@ it('lista solo productos aprobados en el home', function () {
 });
 
 it('requiere autenticacion para crear un producto', function () {
-    $this->get('/crear')->assertRedirect('/login');
-    $this->post('/guardar', [])->assertRedirect('/login');
+    $this->get(route('productos.create'))->assertRedirect(route('login'));
+    $this->post(route('productos.store'), [])->assertRedirect(route('login'));
 });
 
 it('un estudiante puede publicar un producto que queda pendiente', function () {
     $user = User::factory()->create(['rol' => 'estudiante']);
 
-    $response = $this->actingAs($user)->post('/guardar', [
+    $response = $this->actingAs($user)->post(route('productos.store'), [
         'nombre' => 'Libro de Calculo',
         'tipo' => 'producto',
         'especificacion' => 'Libros',
@@ -34,7 +34,7 @@ it('un estudiante puede publicar un producto que queda pendiente', function () {
         'contacto' => '3001234567',
     ]);
 
-    $response->assertRedirect('/mis-productos');
+    $response->assertRedirect(route('productos.mis'));
     $this->assertDatabaseHas('productos', [
         'nombre' => 'Libro de Calculo',
         'estado' => 'pendiente',
@@ -43,12 +43,12 @@ it('un estudiante puede publicar un producto que queda pendiente', function () {
 });
 
 it('un estudiante no puede editar producto de otro usuario', function () {
-    $dueño = User::factory()->create();
+    $dueno = User::factory()->create();
     $intruso = User::factory()->create();
-    $producto = Producto::factory()->create(['user_id' => $dueño->id]);
+    $producto = Producto::factory()->create(['user_id' => $dueno->id]);
 
     $this->actingAs($intruso)
-        ->get("/producto/{$producto->id}/editar")
+        ->get(route('productos.edit', $producto))
         ->assertForbidden();
 });
 
@@ -56,7 +56,8 @@ it('un admin puede aprobar un producto pendiente', function () {
     $admin = User::factory()->create(['rol' => 'admin']);
     $producto = Producto::factory()->create(['estado' => 'pendiente']);
 
-    $this->actingAs($admin)->get("/aprobar/{$producto->id}")
+    $this->actingAs($admin)
+        ->patch(route('admin.productos.aprobar', $producto))
         ->assertRedirect();
 
     expect($producto->fresh()->estado)->toBe('aprobado');
@@ -66,7 +67,8 @@ it('un admin puede rechazar un producto pendiente', function () {
     $admin = User::factory()->create(['rol' => 'admin']);
     $producto = Producto::factory()->create(['estado' => 'pendiente']);
 
-    $this->actingAs($admin)->get("/rechazar/{$producto->id}");
+    $this->actingAs($admin)
+        ->patch(route('admin.productos.rechazar', $producto));
 
     expect($producto->fresh()->estado)->toBe('rechazado');
 });

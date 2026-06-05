@@ -6,7 +6,7 @@
 <div class="mb-8">
     <h1 class="section-header">Mis productos</h1>
     <p class="section-subtitle">Gestiona todos tus publicaciones</p>
-    <a href="/crear" class="btn-primary inline-block mt-4">
+    <a href="{{ route('productos.create') }}" class="btn-primary inline-block mt-4">
         ➕ Publicar nuevo
     </a>
 </div>
@@ -41,8 +41,8 @@
                     </p>
 
                     <div class="flex gap-2 mt-4 justify-end flex-wrap">
-                        <a href="/producto/{{ $p->id }}/editar" class="btn-secondary text-sm">Editar</a>
-                        <form action="/producto/{{ $p->id }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?');">
+                        <a href="{{ route('productos.edit', $p) }}" class="btn-secondary text-sm">Editar</a>
+                        <form action="{{ route('productos.destroy', $p) }}" method="POST" onsubmit="return confirm('¿Eliminar este producto?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn-danger text-sm">Eliminar</button>
@@ -60,7 +60,7 @@
         <p class="text-gray-600 mb-6">
             Comparte tus productos o servicios con la comunidad UTS
         </p>
-        <a href="/crear" class="btn-primary inline-block">
+        <a href="{{ route('productos.create') }}" class="btn-primary inline-block">
             ➕ Publicar ahora
         </a>
     </div>

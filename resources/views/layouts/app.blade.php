@@ -23,7 +23,7 @@
 
             <!-- LINKS DE NAVEGACIÓN -->
             <div class="flex items-center gap-2 sm:gap-4">
-                <a href="/" class="nav-link text-sm sm:text-base">
+                <a href="{{ route('home') }}" class="nav-link text-sm sm:text-base">
                     <span class="hidden sm:inline">Inicio</span>
                     <span class="sm:hidden">🏠</span>
                 </a>
@@ -45,25 +45,25 @@
 
                 <!-- USUARIO LOGUEADO -->
                 @auth
-                    <a href="/mis-productos" class="nav-link text-sm sm:text-base">
+                    <a href="{{ route('productos.mis') }}" class="nav-link text-sm sm:text-base">
                         <span class="hidden sm:inline">Mis productos</span>
                         <span class="sm:hidden">📦</span>
                     </a>
 
-                          <a href="{{ route('chat.list') }}" 
+                    <a href="{{ route('chat.index') }}"
                        class="nav-link text-sm sm:text-base hover:bg-white/20 transition">
                         <span class="hidden sm:inline">💬 Chat</span>
                         <span class="sm:hidden">💬</span>
                     </a>
 
-                    <a href="/crear" 
+                    <a href="{{ route('productos.create') }}"
                        class="nav-link bg-white/20 text-sm sm:text-base hover:bg-white/30">
                         <span class="hidden sm:inline">Publicar</span>
                         <span class="sm:hidden">➕</span>
                     </a>
 
-                    @if(auth()->user()->rol === 'admin')
-                        <a href="/admin" 
+                    @if(auth()->user()->esAdmin())
+                        <a href="{{ route('admin.index') }}"
                            class="nav-link bg-amber-500/20 text-sm sm:text-base hover:bg-amber-500/30">
                             <span class="hidden sm:inline">Admin</span>
                             <span class="sm:hidden">⚙️</span>
@@ -118,7 +118,7 @@
             <div>
                 <h4 class="font-semibold mb-3">Enlaces</h4>
                 <ul class="text-sm text-gray-300 space-y-2">
-                    <li><a href="/" class="hover:text-white transition">Inicio</a></li>
+                    <li><a href="{{ route('home') }}" class="hover:text-white transition">Inicio</a></li>
                     <li><a href="{{ route('login') }}" class="hover:text-white transition">Acceder</a></li>
                 </ul>
             </div>

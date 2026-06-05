@@ -14,7 +14,7 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 @auth
-                    <a href="/crear" class="bg-white text-uts-600 px-8 py-3 rounded-lg font-bold hover:bg-uts-50 transition shadow-lg">
+                    <a href="{{ route('productos.create') }}" class="bg-white text-uts-600 px-8 py-3 rounded-lg font-bold hover:bg-uts-50 transition shadow-lg">
                         ➕ Publicar ahora
                     </a>
                 @endauth
@@ -163,7 +163,7 @@
             Aún no hay productos. Sé el primero en compartir algo con la comunidad UTS.
         </p>
         @auth
-            <a href="/crear" class="btn-primary inline-block">
+            <a href="{{ route('productos.create') }}" class="btn-primary inline-block">
                 ➕ Publicar primer producto
             </a>
         @else

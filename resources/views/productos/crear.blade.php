@@ -12,7 +12,7 @@
 <div class="max-w-2xl mx-auto">
     <div class="card p-8 shadow-elevated">
         
-        <form method="POST" action="/guardar" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="{{ route('productos.store') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Tipo de publicación -->
@@ -134,7 +134,7 @@
 
             <!-- Botones -->
             <div class="flex gap-4 pt-4 border-t">
-                <a href="/" class="btn-secondary flex-1 text-center">
+                <a href="{{ route('home') }}" class="btn-secondary flex-1 text-center">
                     ← Cancelar
                 </a>
                 <button type="submit" class="btn-primary flex-1">

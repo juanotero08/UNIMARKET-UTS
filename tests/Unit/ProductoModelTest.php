@@ -13,7 +13,7 @@ it('expone imagen_url como placeholder cuando no hay imagen', function () {
     ]);
 
     expect($producto->imagen_url)
-        ->toContain('via.placeholder.com')
+        ->toContain('placehold.co')
         ->toContain('Bicicleta');
 });
 
@@ -33,4 +33,13 @@ it('pertenece a un usuario', function () {
 
     expect($producto->user)->toBeInstanceOf(User::class)
         ->and($producto->user->id)->toBe($user->id);
+});
+
+it('scope aprobados filtra solo productos en estado aprobado', function () {
+    $user = User::factory()->create();
+    Producto::factory()->aprobado()->create(['user_id' => $user->id]);
+    Producto::factory()->create(['user_id' => $user->id]);
+    Producto::factory()->rechazado()->create(['user_id' => $user->id]);
+
+    expect(Producto::aprobados()->count())->toBe(1);
 });

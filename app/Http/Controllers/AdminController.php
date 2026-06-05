@@ -2,63 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    public function index(){
-
-        if(Auth::user()->rol != 'admin'){
-            abort(403);
-        }
-
-        $usuarios = User::where('rol', '!=', 'admin')->get();
-        $productosPendientes = Producto::where('estado','pendiente')->get();
-        $todosProductos = Producto::all();
-        
-        return view('admin.index', compact('usuarios', 'productosPendientes', 'todosProductos'));
+    public function index(): View
+    {
+        return view('admin.index', [
+            'usuarios' => User::where('rol', '!=', 'admin')->get(),
+            'productosPendientes' => Producto::with('user:id,name')->pendientes()->get(),
+            'todosProductos' => Producto::with('user:id,name')->latest()->get(),
+        ]);
     }
 
-    public function aprobar($id){
-        $this->verificarAdmin();
-        
-        $p = Producto::find($id);
-        $p->estado='aprobado';
-        $p->save();
+    public function aprobar(Producto $producto): RedirectResponse
+    {
+        $producto->update(['estado' => Producto::ESTADO_APROBADO]);
+
         return back()->with('success', 'Producto aprobado.');
     }
 
-    public function rechazar($id){
-        $this->verificarAdmin();
-        
-        $p = Producto::find($id);
-        $p->estado='rechazado';
-        $p->save();
+    public function rechazar(Producto $producto): RedirectResponse
+    {
+        $producto->update(['estado' => Producto::ESTADO_RECHAZADO]);
+
         return back()->with('success', 'Producto rechazado.');
     }
 
-    public function destroy($id){
-        $this->verificarAdmin();
-        
-        $producto = Producto::findOrFail($id);
-        
-        // Eliminar imagen si existe
-        if($producto->imagen){
+    public function destroy(Producto $producto): RedirectResponse
+    {
+        if ($producto->imagen) {
             Storage::disk('public')->delete($producto->imagen);
         }
-        
+
         $producto->delete();
-        
+
         return back()->with('success', 'Producto eliminado.');
-    }
-    
-    private function verificarAdmin(){
-        if(Auth::user()->rol != 'admin'){
-            abort(403);
-        }
     }
 }

@@ -7,7 +7,7 @@
         <p class="text-sm text-gray-500">Selecciona una conversación para ver los mensajes.</p>
     </div>
 
-    @if (count($conversaciones) > 0)
+    @if (! empty($conversaciones))
         <div class="divide-y divide-gray-100">
             @foreach ($conversaciones as $conv)
                 <a href="{{ route('chat.show', ['receptor_id' => $conv['otro_usuario_id'], 'producto_id' => $conv['producto_id']]) }}"

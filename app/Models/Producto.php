@@ -3,30 +3,78 @@
 namespace App\Models;
 
 use Database\Factories\ProductoFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Producto extends Model
 {
     /** @use HasFactory<ProductoFactory> */
     use HasFactory;
 
+    public const ESTADO_PENDIENTE = 'pendiente';
+
+    public const ESTADO_APROBADO = 'aprobado';
+
+    public const ESTADO_RECHAZADO = 'rechazado';
+
+    public const TIPO_PRODUCTO = 'producto';
+
+    public const TIPO_SERVICIO = 'servicio';
+
     protected $fillable = [
-        'nombre', 'tipo', 'especificacion', 'descripcion',
-        'precio', 'contacto', 'estado', 'user_id', 'imagen'
+        'user_id',
+        'nombre',
+        'tipo',
+        'especificacion',
+        'descripcion',
+        'precio',
+        'contacto',
+        'imagen',
+        'estado',
     ];
 
-    public function user(){
+    protected function casts(): array
+    {
+        return [
+            'precio' => 'decimal:2',
+        ];
+    }
+
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    // Obtener URL de la imagen o placeholder
-    public function getImagenUrlAttribute(){
-        if($this->imagen){
-            return asset('storage/' . $this->imagen);
-        }
-        // Placeholder según tipo
-        $color = $this->tipo === 'servicio' ? '4CAF50' : '2E7D32';
-        return "https://via.placeholder.com/400x300/{$color}/ffffff?text=" . urlencode($this->nombre);
+    public function mensajes(): HasMany
+    {
+        return $this->hasMany(Mensaje::class);
+    }
+
+    public function scopeAprobados(Builder $query): Builder
+    {
+        return $query->where('estado', self::ESTADO_APROBADO);
+    }
+
+    public function scopePendientes(Builder $query): Builder
+    {
+        return $query->where('estado', self::ESTADO_PENDIENTE);
+    }
+
+    protected function imagenUrl(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if ($this->imagen) {
+                return asset('storage/'.$this->imagen);
+            }
+
+            $color = $this->tipo === self::TIPO_SERVICIO ? '4CAF50' : '2E7D32';
+            $text = rawurlencode($this->nombre ?? 'Sin imagen');
+
+            return "https://placehold.co/400x300/{$color}/ffffff?text={$text}";
+        });
     }
 }
